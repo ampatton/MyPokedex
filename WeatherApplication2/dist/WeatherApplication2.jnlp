@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="WeatherApplication2.jnlp">
+  <information>
+    <title>WeatherApplication2</title>
+    <vendor>Austin M. Patton</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="WeatherApplication2.jar" size="5945" download="eager" />
+    <jar href="lib\gson-2.8.0-javadoc.jar" size="261988" download="eager" />
+    <jar href="lib\gson-2.8.0-sources.jar" size="146908" download="eager" />
+    <jar href="lib\gson-2.8.0.jar" size="231952" download="eager" />
+    <jar href="lib\riot-api-java.jar" size="232092" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="WeatherApplication2" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="weatherapplication2.WeatherApplication2"  name="WeatherApplication2" />
+  <update check="always"/>
+</jnlp>

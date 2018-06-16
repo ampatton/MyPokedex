@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="411.0" prefWidth="544.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weatherapplication2.FXMLDocumentController">
+    <children>
+        <Button fx:id="button" layoutX="61.0" layoutY="270.0" onAction="#handleButtonAction" text="Click Me!" />
+      <Label fx:id="label" layoutX="63.0" layoutY="330.0" text="Label" />
+      <Label layoutX="229.0" layoutY="14.0" prefHeight="31.0" prefWidth="123.0" text="Austin's Pokedex" />
+      <TextField fx:id="searchBar" layoutX="265.0" layoutY="50.0" prefHeight="31.0" prefWidth="160.0" />
+      <Button layoutX="449.0" layoutY="51.0" mnemonicParsing="false" onAction="#sendGet" text="Search" />
+      <VBox layoutX="257.0" layoutY="101.0" prefHeight="200.0" prefWidth="242.0" spacing="10.0">
+         <children>
+            <Label fx:id="pokemonName" text="Name:" />
+            <Label fx:id="pokemonID" text="ID #:" />
+            <Label fx:id="pokemonHeight" text="Height:" />
+            <Label fx:id="pokemonWeight" lineSpacing="5.0" text="Weight:" />
+         </children>
+      </VBox>
+      <ChoiceBox fx:id="searchSettingPicker" layoutX="63.0" layoutY="51.0" prefHeight="31.0" prefWidth="184.0" />
+    </children>
+</AnchorPane>
