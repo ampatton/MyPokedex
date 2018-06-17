@@ -4,11 +4,15 @@
  * and open the template in the editor.
  */
 package weatherapplication2;
-
+import org.json.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -16,10 +20,14 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 
@@ -35,8 +43,6 @@ import net.rithms.riot.constant.Platform;
  */
 public class FXMLDocumentController implements Initializable {
     
-    @FXML
-    private Label label;
     
     @FXML
     public ChoiceBox searchSettingPicker;
@@ -54,7 +60,33 @@ public class FXMLDocumentController implements Initializable {
     public Label pokemonWeight;
     
     @FXML
+    public Label pokemonHP;
+    
+    @FXML
+    public Label pokemonAttack;
+    
+    @FXML
+    public Label pokemonDefense;
+    
+    @FXML 
+    public Label pokemonSpecialAttack;
+    
+    @FXML
+    public Label pokemonSpecialDefense;
+    
+    @FXML Label pokemonSpeed;
+    
+    @FXML
+    public Label pokemonTypes;
+    
+    @FXML
     public TextField searchBar;
+    
+    @FXML
+    public ImageView pokemonSpriteView;
+    
+    @FXML
+    public ImageView pokemonShinySpriteView;
     
     private final String USER_AGENT = "Mozilla/5.0";
     
@@ -62,11 +94,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handleButtonAction(ActionEvent event) {
         System.out.println("You clicked me!");
-        label.setText("Hello World!");
         
         
-        
-        int pie =4;
+       
         
         
         
@@ -155,16 +185,46 @@ public class FXMLDocumentController implements Initializable {
                 JsonObject jsonPokemon = (JsonObject) parser.parse(pokemon);
                 System.out.println(jsonPokemon);
                 
+               
+               
+             
                 Gson gson = new Gson();
                 PokedexMemberJava treecko = gson.fromJson(jsonPokemon, PokedexMemberJava.class);
-                System.out.println(treecko.name);
+
+                System.out.println(treecko.types[0].type.name);
+                System.out.println(treecko.sprites.front_default);
                 
                 
                pokemonName.setText("Name: " + treecko.name);
                pokemonID.setText("ID #: " + Integer.toString(treecko.id));
                pokemonHeight.setText("Height: " + Integer.toString(treecko.height)+ " ft");
                pokemonWeight.setText("Weight: " + Integer.toString(treecko.weight)+ " lbs");
-   
+               
+               if(treecko.types.length == 1){
+               pokemonTypes.setText("Type: " + treecko.types[0].type.name);
+               } else{//A pokemon can only have a maximum of two types, so if he doesnt have one type then it has to have two
+               pokemonTypes.setText("Types: " + treecko.types[0].type.name + " "+ treecko.types[1].type.name);
+               }
+ 
+               
+                Image spriteImage = new Image(treecko.sprites.front_default);
+                pokemonSpriteView.setImage(spriteImage);
+                
+                Image shinySpriteImage = new Image(treecko.sprites.front_shiny);
+                pokemonShinySpriteView.setImage(shinySpriteImage);
+                
+                
+                pokemonSpeed.setText("Speed: " + treecko.stats[0].base_stat);
+                pokemonSpecialDefense.setText("Special Defense: " + treecko.stats[1].base_stat);
+                pokemonSpecialAttack.setText("Special Attack: " + treecko.stats[2].base_stat);
+                pokemonDefense.setText("Defense: " + treecko.stats[3].base_stat);
+                pokemonAttack.setText("Attack: " + treecko.stats[4].base_stat);
+                pokemonHP.setText("HP: " + treecko.stats[5].base_stat);
+                
+                System.out.println(treecko.stats[5].stat.name);//can change these print statements to whatever position in the array to verify    
+                System.out.println(treecko.stats[5].base_stat);//that the correct category matches with the correct number (currently verifies HP value)
+                
+               
 	}
     /**
      * @param args the command line arguments

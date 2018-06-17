@@ -14,6 +14,9 @@ public class PokedexMemberJava {
     String name;
     int height;
     int weight;
+    Sprites sprites;
+    Stats[] stats;
+    Types[] types;
     
     public PokedexMemberJava(int id, String name, int height, int weight){
         this.id = id;
