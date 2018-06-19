@@ -10,12 +10,20 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,9 +51,11 @@ import net.rithms.riot.constant.Platform;
  */
 public class FXMLDocumentController implements Initializable {
     
+    @FXML
+    public Label date;
     
     @FXML
-    public ChoiceBox searchSettingPicker;
+    public ChoiceBox searchSettingPicker;//ChoiceBox to choose between seraching for a name or an id
     
     @FXML
     public Label pokemonName;
@@ -80,26 +90,24 @@ public class FXMLDocumentController implements Initializable {
     public Label pokemonTypes;
     
     @FXML
-    public TextField searchBar;
+    public TextField searchBar;//TextField that is used as a search bar for the pokedex
     
     @FXML
-    public ImageView pokemonSpriteView;
+    public ImageView pokemonSpriteView;//ImageView that displays the regular version of the pokemon
     
     @FXML
-    public ImageView pokemonShinySpriteView;
+    public ImageView pokemonShinySpriteView;//ImageView that displays the shiny version of the pokemon
+    
     
     private final String USER_AGENT = "Mozilla/5.0";
+    
+    private LocalDateTime timePoint;
+    private String pokemon;
     
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        
-        
-       
-        
-        
-        
+
                /* try
                 {
                 ApiConfig config = new ApiConfig().setKey("RGAPI-65112403-076b-4f7a-bf57-1ae2fa894124");
@@ -121,13 +129,11 @@ public class FXMLDocumentController implements Initializable {
         } catch (IOException E) {
             System.out.println("Caught IOException: " + E.getMessage());
         }*/
-       
-       
-        
+         
     }
     
     @FXML
-    private void sendGet() throws Exception {
+    private void sendGet() {//sends a get request to the API which returns the serached pokemon's information
 
                 //checks to see if the user selected a valid search category (Name, ID) instead of "Search pokemon by..."
                 if (searchSettingPicker.getSelectionModel().getSelectedItem().equals("Search pokemon by...")){
@@ -142,28 +148,31 @@ public class FXMLDocumentController implements Initializable {
                 }
         
 		String url = "https://pokeapi.co/api/v2/";
-                String urlTwo = "https://pokeapi.co/api/v2/pokemon/treecko/";
+                String urlTwo = "https://pokeapi.co/api/v2/pokemon/treecko/";//can sub this url in to pull up a pokemon without any user input
                 
-                url = url + "pokemon/" + searchBar.getText() + "/";
-                
+                url = url + "pokemon/" + searchBar.getText().toLowerCase() + "/";//Adds the correct parts of the path to enable the user to request the API for the pokemons data.
+                                                                      //Also, the API doesn't allow lowercase letters as input, which is why the text was converted to lower case.
                 if(searchSettingPicker.getSelectionModel().getSelectedItem().equals("Name")){
                     System.out.print("Searching for pokemon by name with this url:" + url);
                 } else{
                     System.out.print("Searching for pokemon by ID # with this url:" + url);
                 }
 		
+                
+                try{
 		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
-		con.setRequestMethod("GET");
-
-		//add request header
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                con.setRequestMethod("GET");
+                //add request header
 		con.setRequestProperty("User-Agent", USER_AGENT);
 
 		int responseCode = con.getResponseCode();
 		System.out.println("\nSending 'GET' request to URL : " + url);
 		System.out.println("Response Code : " + responseCode);
+                
+                if(responseCode == 404){
+                    JOptionPane.showMessageDialog(null, "It seems the Pokemon was not found! This could be caused by the Pokemon's name being misspelled.");
+                }
 
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(con.getInputStream()));
@@ -174,36 +183,51 @@ public class FXMLDocumentController implements Initializable {
 			response.append(inputLine);
 		}
 		in.close();
-
-		//print result
-		System.out.println(response.toString());
-                String pokemon = response.toString();
-                System.out.println(pokemon);
                 
+		System.out.println(response.toString());
+                pokemon = response.toString();
+                System.out.println(pokemon);
+                } 
+                catch (MalformedURLException E){
+                    System.out.println("MalformedURLException occured when trying to create obj of class URL");
+                     E.printStackTrace(System.err);
+                } catch (ProtocolException E){
+                    System.out.println("ProtocolException occured. This most likely happened when setting cons request method to GET");
+                    E.printStackTrace(System.err);
+                } catch(IOException E){
+                    System.out.println("IOException occured.");
+                    E.printStackTrace(System.err);
+                }
+		
                 
                 JsonParser parser = new JsonParser();
                 JsonObject jsonPokemon = (JsonObject) parser.parse(pokemon);
                 System.out.println(jsonPokemon);
-                
-               
-               
+                             
              
                 Gson gson = new Gson();
                 PokedexMemberJava treecko = gson.fromJson(jsonPokemon, PokedexMemberJava.class);
 
-                System.out.println(treecko.types[0].type.name);
-                System.out.println(treecko.sprites.front_default);
+                System.out.println(treecko.types[0].type.name);//test message to see if the name was corretly loaded
+                System.out.println(treecko.sprites.front_default);//test message to see if the image of the default sprite was loaded
+         
                 
-                
+               //All of the strings given by the API are given in all lowercase. That is why I am using the substring.toUpperCase method so I can capitalize the first letter
+               //of each piece of string output
+               treecko.name = treecko.name.substring(0, 1).toUpperCase() + treecko.name.substring(1);
                pokemonName.setText("Name: " + treecko.name);
+               
                pokemonID.setText("ID #: " + Integer.toString(treecko.id));
                pokemonHeight.setText("Height: " + Integer.toString(treecko.height)+ " ft");
                pokemonWeight.setText("Weight: " + Integer.toString(treecko.weight)+ " lbs");
                
                if(treecko.types.length == 1){
+                treecko.types[0].type.name = treecko.types[0].type.name.substring(0, 1).toUpperCase() + treecko.types[0].type.name.substring(1);
                pokemonTypes.setText("Type: " + treecko.types[0].type.name);
                } else{//A pokemon can only have a maximum of two types, so if he doesnt have one type then it has to have two
-               pokemonTypes.setText("Types: " + treecko.types[0].type.name + " "+ treecko.types[1].type.name);
+               treecko.types[0].type.name = treecko.types[0].type.name.substring(0, 1).toUpperCase() + treecko.types[0].type.name.substring(1);
+               treecko.types[1].type.name = treecko.types[0].type.name.substring(0, 1).toUpperCase() + treecko.types[1].type.name.substring(1);
+               pokemonTypes.setText("Types: " + treecko.types[0].type.name + ", "+ treecko.types[1].type.name);
                }
  
                
@@ -236,9 +260,28 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        
+        timePoint = LocalDateTime.now();
+        //Month month = timePoint.getMonth(); Returns value in all caps
+        int day = timePoint.getDayOfMonth();
+        int year = timePoint.getYear();
+        //DayOfWeek dayOfWeek = timePoint.getDayOfWeek(); Returns value in all caps.
+        
+        String monthString = timePoint.getMonth().toString();// Doing it this way instead gives you a modifiable string
+        String dayOfWeekString = timePoint.getDayOfWeek().toString();//which allows you to change the capitalization of the words
+        
+        monthString = monthString.substring(0, 1).toUpperCase() + monthString.substring(1).toLowerCase();
+        dayOfWeekString = dayOfWeekString.substring(0,1).toUpperCase() + dayOfWeekString.substring(1).toLowerCase();
+        
+         
+        
+        date.setText(dayOfWeekString + ", " + monthString + " " + day + ", " + year);
+        
     searchSettingPicker.getItems().removeAll(searchSettingPicker.getItems());
     searchSettingPicker.getItems().addAll("Search pokemon by...", "Name", "ID");
     searchSettingPicker.getSelectionModel().select("Search pokemon by...");
+    
+    
     }    
     
 }

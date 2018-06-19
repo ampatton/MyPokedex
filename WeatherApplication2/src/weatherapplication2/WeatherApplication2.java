@@ -22,9 +22,8 @@ public class WeatherApplication2 extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        
         Scene scene = new Scene(root);
-        
+         scene.getStylesheets().add(WeatherApplication2.class.getResource("testCSS.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
     }
