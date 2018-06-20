@@ -10,12 +10,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weatherapplication2.FXMLDocumentController">
     <children>
-      <Label layoutX="304.0" layoutY="15.0" prefHeight="31.0" prefWidth="123.0" text="Austin's Pokedex" />
-      <ImageView fitHeight="195.0" fitWidth="200.0" layoutX="246.0" layoutY="138.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@pokeball.png" />
-         </image>
-      </ImageView>
+      <Label layoutX="305.0" layoutY="30.0" prefHeight="31.0" prefWidth="123.0" text="Austin's Pokedex" />
       <VBox layoutX="537.0" layoutY="30.0" prefHeight="390.0" prefWidth="263.0" spacing="10.0">
          <children>
             <HBox prefHeight="31.0" prefWidth="263.0" spacing="25.0">
@@ -46,6 +41,8 @@
             <ImageView fx:id="pokemonShinySpriteView" fitHeight="169.0" fitWidth="219.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </VBox>
-      <Label fx:id="date" layoutX="278.0" layoutY="46.0" prefHeight="21.0" prefWidth="176.0" text="Today's Date: " />
+      <Label fx:id="date" layoutX="278.0" layoutY="68.0" prefHeight="21.0" prefWidth="176.0" text="Today's Date: " />
+      <Button layoutX="229.0" layoutY="104.0" mnemonicParsing="false" onAction="#handlePreviousButtonAction" text="Previous" />
+      <Button layoutX="384.0" layoutY="104.0" mnemonicParsing="false" onAction="#handleNextButtonAction" text="Next" />
     </children>
 </AnchorPane>

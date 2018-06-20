@@ -98,12 +98,47 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public ImageView pokemonShinySpriteView;//ImageView that displays the shiny version of the pokemon
     
+
     
     private final String USER_AGENT = "Mozilla/5.0";
-    
     private LocalDateTime timePoint;
     private String pokemon;
+    private int pokemonIDValue = 0;
     
+    
+    @FXML
+    private void handleNextButtonAction(ActionEvent event){
+        if(pokemonID.getText().equals("ID #:")){
+            System.out.println(pokemonID.getText());
+            return;
+        } else{
+            pokemonIDValue +=1;//Increases the pokemonIDValue variable by one, which grabs the next pokemon in the pokedex
+            System.out.println("The value of the next pokemon's id is: " + pokemonIDValue);
+            searchBar.setText(String.valueOf(pokemonIDValue));
+            searchSettingPicker.getSelectionModel().select("ID");//You can actually search the API with a name or ID while not changing the url at all
+                                                        //I was unaware of this, but didnt want to take it out in case that the settingPicker becomes needed  
+            sendGet();
+        }
+        
+        
+    }
+    
+    @FXML
+    private void handlePreviousButtonAction(ActionEvent event){
+        if(pokemonID.getText().equals("ID #:")){
+            System.out.println(pokemonID.getText());
+            return;
+        } else{
+            pokemonIDValue -=1;//Decreases the pokemonIDValue variable by one, which grabs the previous pokemon in the pokedex
+            System.out.println("The value of the next pokemon's id is: " + pokemonIDValue);
+            searchBar.setText(String.valueOf(pokemonIDValue));
+            searchSettingPicker.getSelectionModel().select("ID");//You can actually search the API with a name or ID while not changing the url at all
+                                                        //I was unaware of this, but didnt want to take it out in case that the settingPicker becomes needed
+            sendGet();
+        }
+        
+        
+    }
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -146,7 +181,9 @@ public class FXMLDocumentController implements Initializable {
                     JOptionPane.showMessageDialog(null, "The search bar is empty. Please identify what you would like to search by.");  
                         return;
                 }
-        
+       
+
+                
 		String url = "https://pokeapi.co/api/v2/";
                 String urlTwo = "https://pokeapi.co/api/v2/pokemon/treecko/";//can sub this url in to pull up a pokemon without any user input
                 
@@ -218,6 +255,7 @@ public class FXMLDocumentController implements Initializable {
                pokemonName.setText("Name: " + treecko.name);
                
                pokemonID.setText("ID #: " + Integer.toString(treecko.id));
+               pokemonIDValue = treecko.id;//sets the idValue so that it can be used in the handleNextButton method
                pokemonHeight.setText("Height: " + Integer.toString(treecko.height)+ " ft");
                pokemonWeight.setText("Weight: " + Integer.toString(treecko.weight)+ " lbs");
                
