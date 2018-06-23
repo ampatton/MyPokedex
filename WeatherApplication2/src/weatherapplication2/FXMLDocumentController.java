@@ -25,6 +25,9 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ResourceBundle;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -35,6 +38,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
@@ -53,6 +57,9 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     public Label date;
+    
+    @FXML
+    public Label time;
     
     @FXML
     public ChoiceBox searchSettingPicker;//ChoiceBox to choose between seraching for a name or an id
@@ -99,11 +106,12 @@ public class FXMLDocumentController implements Initializable {
     public ImageView pokemonShinySpriteView;//ImageView that displays the shiny version of the pokemon
     
 
-    
-    private final String USER_AGENT = "Mozilla/5.0";
     private LocalDateTime timePoint;
-    private String pokemon;
     private int pokemonIDValue = 0;
+    int hours = 0;
+    int minutes = 0;
+    int seconds = 0;
+    
     
     
     @FXML
@@ -117,7 +125,7 @@ public class FXMLDocumentController implements Initializable {
             searchBar.setText(String.valueOf(pokemonIDValue));
             searchSettingPicker.getSelectionModel().select("ID");//You can actually search the API with a name or ID while not changing the url at all
                                                         //I was unaware of this, but didnt want to take it out in case that the settingPicker becomes needed  
-            sendGet();
+            searchForPokemon();
         }
         
         
@@ -134,7 +142,7 @@ public class FXMLDocumentController implements Initializable {
             searchBar.setText(String.valueOf(pokemonIDValue));
             searchSettingPicker.getSelectionModel().select("ID");//You can actually search the API with a name or ID while not changing the url at all
                                                         //I was unaware of this, but didnt want to take it out in case that the settingPicker becomes needed
-            sendGet();
+            searchForPokemon();
         }
         
         
@@ -168,7 +176,7 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
-    private void sendGet() {//sends a get request to the API which returns the serached pokemon's information
+    private void searchForPokemon() {//sends a get request to the API which returns the serached pokemon's information
 
                 //checks to see if the user selected a valid search category (Name, ID) instead of "Search pokemon by..."
                 if (searchSettingPicker.getSelectionModel().getSelectedItem().equals("Search pokemon by...")){
@@ -196,54 +204,8 @@ public class FXMLDocumentController implements Initializable {
                 }
 		
                 
-                try{
-		URL obj = new URL(url);
-                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                con.setRequestMethod("GET");
-                //add request header
-		con.setRequestProperty("User-Agent", USER_AGENT);
-
-		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
-                
-                if(responseCode == 404){
-                    JOptionPane.showMessageDialog(null, "It seems the Pokemon was not found! This could be caused by the Pokemon's name being misspelled.");
-                }
-
-		BufferedReader in = new BufferedReader(
-		        new InputStreamReader(con.getInputStream()));
-		String inputLine;
-		StringBuffer response = new StringBuffer();
-
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-                
-		System.out.println(response.toString());
-                pokemon = response.toString();
-                System.out.println(pokemon);
-                } 
-                catch (MalformedURLException E){
-                    System.out.println("MalformedURLException occured when trying to create obj of class URL");
-                     E.printStackTrace(System.err);
-                } catch (ProtocolException E){
-                    System.out.println("ProtocolException occured. This most likely happened when setting cons request method to GET");
-                    E.printStackTrace(System.err);
-                } catch(IOException E){
-                    System.out.println("IOException occured.");
-                    E.printStackTrace(System.err);
-                }
-		
-                
-                JsonParser parser = new JsonParser();
-                JsonObject jsonPokemon = (JsonObject) parser.parse(pokemon);
-                System.out.println(jsonPokemon);
-                             
-             
-                Gson gson = new Gson();
-                PokedexMemberJava treecko = gson.fromJson(jsonPokemon, PokedexMemberJava.class);
+               ModelClass model = new ModelClass();
+               PokedexMemberJava treecko = model.sendGetRequest(url);
 
                 System.out.println(treecko.types[0].type.name);//test message to see if the name was corretly loaded
                 System.out.println(treecko.sprites.front_default);//test message to see if the image of the default sprite was loaded
@@ -292,7 +254,14 @@ public class FXMLDocumentController implements Initializable {
      * @param args the command line arguments
      * 
      */
-    
+    public void updateTime(){
+        timePoint = LocalDateTime.now();
+        hours = timePoint.getHour();
+        minutes = timePoint.getMinute();
+        seconds = timePoint.getSecond();
+        
+        time.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+    }
 
     
     @Override
@@ -304,6 +273,10 @@ public class FXMLDocumentController implements Initializable {
         int day = timePoint.getDayOfMonth();
         int year = timePoint.getYear();
         //DayOfWeek dayOfWeek = timePoint.getDayOfWeek(); Returns value in all caps.
+        hours = timePoint.getHour();
+        minutes = timePoint.getMinute();
+        seconds = timePoint.getSecond();
+        
         
         String monthString = timePoint.getMonth().toString();// Doing it this way instead gives you a modifiable string
         String dayOfWeekString = timePoint.getDayOfWeek().toString();//which allows you to change the capitalization of the words
@@ -311,9 +284,14 @@ public class FXMLDocumentController implements Initializable {
         monthString = monthString.substring(0, 1).toUpperCase() + monthString.substring(1).toLowerCase();
         dayOfWeekString = dayOfWeekString.substring(0,1).toUpperCase() + dayOfWeekString.substring(1).toLowerCase();
         
-         
-        
         date.setText(dayOfWeekString + ", " + monthString + " " + day + ", " + year);
+        
+        time.setText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        
+        Timeline timeLine;//Initializes new timeline for the clock
+        timeLine = new Timeline(new KeyFrame(Duration.millis(1000), actionEvent -> updateTime()));//calls the updateTime function every second
+        timeLine.setCycleCount(Animation.INDEFINITE);//makes sure that the timeLine will infinitely run
+        timeLine.play();//starts the timeLine
         
     searchSettingPicker.getItems().removeAll(searchSettingPicker.getItems());
     searchSettingPicker.getItems().addAll("Search pokemon by...", "Name", "ID");

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import java.lang.*?>
@@ -10,13 +11,12 @@
 
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="weatherapplication2.FXMLDocumentController">
     <children>
-      <Label layoutX="305.0" layoutY="30.0" prefHeight="31.0" prefWidth="123.0" text="Austin's Pokedex" />
       <VBox layoutX="537.0" layoutY="30.0" prefHeight="390.0" prefWidth="263.0" spacing="10.0">
          <children>
             <HBox prefHeight="31.0" prefWidth="263.0" spacing="25.0">
                <children>
                   <TextField fx:id="searchBar" prefHeight="31.0" prefWidth="160.0" />
-                  <Button mnemonicParsing="false" onAction="#sendGet" text="Search" />
+                  <Button mnemonicParsing="false" onAction="#searchForPokemon" text="Search" />
                </children>
             </HBox>
             <Label fx:id="pokemonName" text="Name:" />
@@ -41,8 +41,18 @@
             <ImageView fx:id="pokemonShinySpriteView" fitHeight="169.0" fitWidth="219.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </VBox>
-      <Label fx:id="date" layoutX="278.0" layoutY="68.0" prefHeight="21.0" prefWidth="176.0" text="Today's Date: " />
-      <Button layoutX="229.0" layoutY="104.0" mnemonicParsing="false" onAction="#handlePreviousButtonAction" text="Previous" />
-      <Button layoutX="384.0" layoutY="104.0" mnemonicParsing="false" onAction="#handleNextButtonAction" text="Next" />
+      <VBox alignment="TOP_CENTER" layoutX="280.0" layoutY="54.0" prefHeight="87.0" prefWidth="175.0">
+         <children>
+            <Label prefHeight="31.0" prefWidth="117.0" text="Austin's Pokedex" />
+            <Label fx:id="date" prefHeight="21.0" prefWidth="176.0" text="Today's Date: " />
+            <Label fx:id="time" prefHeight="21.0" prefWidth="80.0" text="currentTime" />
+         </children>
+      </VBox>
+      <HBox alignment="TOP_CENTER" layoutX="255.0" layoutY="141.0" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handlePreviousButtonAction" text="Previous" />
+            <Button mnemonicParsing="false" onAction="#handleNextButtonAction" text="Next" />
+         </children>
+      </HBox>
     </children>
 </AnchorPane>
