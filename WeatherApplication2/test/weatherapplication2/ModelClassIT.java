@@ -16,18 +16,46 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import javax.swing.JOptionPane;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Austin M. Patton
  */
-public class ModelClass {
+public class ModelClassIT {
     
-    private final String USER_AGENT = "Mozilla/5.0";
-    public String pokemon;
+    public ModelClassIT() {
+    }
     
-    public PokedexMemberJava sendGetRequest(String url){
-                String urlTwo = "https://pokeapi.co/api/v2/pokemon/treecko/";//can sub this url in to pull up a pokemon without any user input
+    @BeforeClass
+    public static void setUpClass() {
+    }
+    
+    @AfterClass
+    public static void tearDownClass() {
+    }
+    
+    @Before
+    public void setUp() {
+    }
+    
+    @After
+    public void tearDown() {
+    }
+
+    /**
+     * Test of sendGetRequest method, of class ModelClass.
+     */
+    @Test
+    public void testSendGetRequest() {
+                String url = "https://pokeapi.co/api/v2/pokemon/treecko/";//can sub this url in to pull up a pokemon without any user input
+                String USER_AGENT = "Mozilla/5.0";
+                String pokemon = "";
                 
                          
                 try{
@@ -38,12 +66,6 @@ public class ModelClass {
 		con.setRequestProperty("User-Agent", USER_AGENT);
 
 		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
-                
-                if(responseCode == 404){
-                    JOptionPane.showMessageDialog(null, "It seems the Pokemon was not found! This could be caused by the Pokemon's name being misspelled.");
-                }
 
 		BufferedReader in = new BufferedReader(
 		        new InputStreamReader(con.getInputStream()));
@@ -55,9 +77,11 @@ public class ModelClass {
 		}
 		in.close();
                 
+                assertNotNull(response);
 		System.out.println(response.toString());
                 pokemon = response.toString();
                 System.out.println(pokemon);
+                
                 } 
                 catch (MalformedURLException E){
                     System.out.println("MalformedURLException occured when trying to create obj of class URL");
@@ -69,18 +93,15 @@ public class ModelClass {
                     System.out.println("IOException occured.");
                     E.printStackTrace(System.err);
                 }
-		
-                
+        
                 JsonParser parser = new JsonParser();
                 JsonObject jsonPokemon = (JsonObject) parser.parse(pokemon);
                 System.out.println(jsonPokemon);
-                             
-             
+                
+                assertNotNull(jsonPokemon);//Tests to make sure that the JSON pokemon object was successfully created
+                
                 Gson gson = new Gson();
                 PokedexMemberJava treecko = gson.fromJson(jsonPokemon, PokedexMemberJava.class);
-                
-                return treecko;
-}
-    
+    }
     
 }
